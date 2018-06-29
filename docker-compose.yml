@@ -1,0 +1,54 @@
+version: '2'
+
+services:
+
+  elasticsearch:
+    build:
+      context: elasticsearch/
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - 9200
+      - 9300
+    restart: always
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.zen.ping.unicast.hosts: elasticsearch
+    networks:
+      - skywalking
+  skywalking-collector:
+    build:
+      context: skywalking-collector/
+    ports:
+      - "10800:10800"
+      - "11800:11800"
+      - "12800:12800"
+    restart: always
+    networks:
+      - skywalking
+    depends_on:
+      - elasticsearch
+  skywalking-webapp:
+    build:
+      context: skywalking-webapp/
+    restart: always
+    ports:
+      - "8008:8080"
+    networks:
+      - skywalking
+    depends_on:
+      - skywalking-collector
+  kibana:
+    build:
+      context: kibana/
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - skywalking
+    depends_on:
+      - elasticsearch
+networks:
+  skywalking:
+    driver: bridge

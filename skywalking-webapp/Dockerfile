@@ -1,0 +1,1 @@
+FROM liguobao/skywalking-ui:5.0.0-beta
