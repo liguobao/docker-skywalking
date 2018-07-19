@@ -1,5 +1,5 @@
 ```docker
-FROM registry.cn-hangzhou.aliyuncs.com/acs/maven AS build-env
+FROM openjdk:8u151-alpine
 ENV MY_HOME=/usr/src/app
 RUN mkdir -p $MY_HOME
 WORKDIR $MY_HOME
